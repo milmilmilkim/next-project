@@ -9,8 +9,14 @@ const AppLayout: React.FC<PropsWithChildren> = ({ children }) => {
       <style jsx>
         {`
           .container {
-            width: 1024px;
+            max-width: 1024px;
             margin: auto;
+          }
+
+          @media (max-width: 800px) {
+            .container {
+              width: 100%;
+            }
           }
         `}
       </style>

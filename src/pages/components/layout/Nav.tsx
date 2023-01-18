@@ -7,8 +7,8 @@ export default function Nav() {
       path: '/',
     },
     {
-      name: 'about',
-      path: '/about',
+      name: 'villager',
+      path: '/villager',
     },
   ];
   return (

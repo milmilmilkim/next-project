@@ -15,9 +15,6 @@ export default function Home() {
         <hr />
         <p>hello world</p>
       </header>
-      <div>
-        <Pagination />
-      </div>
       <style jsx>
         {`
           h1 {
