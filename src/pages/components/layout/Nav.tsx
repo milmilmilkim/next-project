@@ -10,6 +10,10 @@ export default function Nav() {
       name: 'villager',
       path: '/villager',
     },
+    {
+      name: 'sheet',
+      path: '/sheet',
+    },
   ];
   return (
     <>

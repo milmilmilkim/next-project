@@ -1,33 +1,38 @@
 import axios from 'axios';
-import { GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
+// import { GetServerSideProps } from 'next';
+import { useState } from 'react';
 import Pagination from '../components/common/Pagination';
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Villager, Species } from '../typing/common';
+// import { Villager } from '../typing/common';
+import useVillager from '../hooks/queries/useVillagerList';
+import { useQueryClient } from 'react-query';
 
-type IndexProps = {
-  data: Villager[];
-  species: string[];
-};
+// type IndexProps = {
+//   data: Villager[];
+//   species: string[];
+// };
 
 type SearchForm = {
   name?: string;
 };
 
-const page: React.FC<IndexProps> = ({ data, species }) => {
-  const [villagers, setVillagers] = useState<Villager[]>();
+const page = () => {
+  // const [villagers, setVillagers] = useState<Villager[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalRows, setTotalRows] = useState<number>(data.length);
   const [searchForm, setSearchForm] = useState<SearchForm>({});
+  const {
+    data: villagers,
+    isLoading,
+    error,
+  } = useVillager({ currentPage: currentPage || 1 });
   const PER_PAGE = 15;
-
   const router = useRouter();
 
   const search = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (currentPage === 1) {
-      getList();
+      // getList();
     } else {
       setCurrentPage(1);
     }
@@ -41,31 +46,11 @@ const page: React.FC<IndexProps> = ({ data, species }) => {
     });
   };
 
-  const getList = () => {
-    let fData = data;
-    if (searchForm.name) {
-      fData = data.filter((villager: Villager) =>
-        villager.name['name-KRko'].includes(searchForm.name as string)
-      );
-    }
-    const offset = (currentPage - 1) * PER_PAGE;
-    setTotalRows(fData.length);
-    setVillagers(fData?.slice(offset, offset + PER_PAGE));
-  };
-
   const movePage = (id: number) => {
     const current = router.asPath;
 
     router.push(`${current}/${id}`);
   };
-
-  useEffect(() => {
-    getList();
-  }, [currentPage]);
-
-  useEffect(() => {
-    return () => {};
-  }, []);
 
   return (
     <>
@@ -75,19 +60,24 @@ const page: React.FC<IndexProps> = ({ data, species }) => {
         <button type='submit'>검색</button>
       </form>
       <hr />
-      <span>총 {totalRows} 마리</span>
-      {/* {species.map((item:string) => <span>{Species[item as keyof typeof Species]}</span>)} */}
+      <span>총...마리</span>
       <hr />
-      <div className='item-wrapper'>
-        {villagers?.map((item) => (
-          <div className='item' key={item.id} onClick={() => movePage(item.id)}>
-            <span className='villager-name'>{item.name['name-KRko']}</span>
-            <img src={item.icon_uri} alt={item.name['name-KRko']} />
-          </div>
-        ))}
-      </div>
+      {!isLoading && (
+        <div className='item-wrapper'>
+          {villagers?.map((item) => (
+            <div
+              className='item'
+              key={item.id}
+              onClick={() => movePage(item.id)}>
+              <span className='villager-name'>{item.name['name-KRko']}</span>
+              <img src={item.icon_uri} alt={item.name['name-KRko']} />
+            </div>
+          ))}
+        </div>
+      )}
+
       <Pagination
-        totalRows={totalRows}
+        totalRows={100}
         perPage={PER_PAGE}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -121,7 +111,6 @@ const page: React.FC<IndexProps> = ({ data, species }) => {
           .item img {
             max-width: 80%;
             height: auto;
-
           }
 
           .item .villager-name {
@@ -133,37 +122,33 @@ const page: React.FC<IndexProps> = ({ data, species }) => {
               grid-template-columns: repeat(3, 1fr);
             }
           }
-
-        
         `}
       </style>
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const { data } = await axios.get('http://acnhapi.com/v1/villagers/');
-  const keys = Object.keys(data);
-  const list: Villager[] = [];
-  keys.forEach((key: string) => {
-    list.push(data[key]);
-  });
-  const set = new Set(list.map((v) => v.species))
-  const species = Array.from(set);
-  return {
-    props: {
-      data: list.sort((a, b) => {
-        if (a.name['name-KRko'] < b.name['name-KRko']) {
-          return -1;
-        }
-        if (a.name['name-KRko'] < b.name['name-KRko']) {
-          return 1;
-        }
-        return 0;
-      }),
-      species,
-    },
-  };
-};
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   const { data } = await axios.get('http://acnhapi.com/v1/villagers/');
+//   const keys = Object.keys(data);
+//   const list: Villager[] = [];
+//   keys.forEach((key: string) => {
+//     list.push(data[key]);
+//   });
+//   return {
+//     props: {
+//       data: list.sort((a, b) => {
+//         if (a.name['name-KRko'] < b.name['name-KRko']) {
+//           return -1;
+//         }
+//         if (a.name['name-KRko'] < b.name['name-KRko']) {
+//           return 1;
+//         }
+//         return 0;
+//       }),
+//       species,
+//     },
+//   };
+// };
 
 export default page;
