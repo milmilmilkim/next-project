@@ -1,15 +1,15 @@
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import { useEffect } from 'react';
-import axios from 'axios';
+import axios from '@/utils/axios';
 import { Villager, Species } from '../typing/villager';
 
 type PageProps = {
-  data: Villager;
+  data: { data: Villager };
 };
 
-const page: React.FC<PageProps> = ({ data }) => {
-  const router = useRouter();
+const page: React.FC<PageProps> = ({ data: { data } }) => {
+  // const router = useRouter();
 
   const {
     name: { 'name-KRko': nameKr },
@@ -68,9 +68,7 @@ const page: React.FC<PageProps> = ({ data }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { data } = await axios.get(
-    'http://acnhapi.com/v1/villagers/' + query.id
-  );
+  const { data } = await axios.get('/api/villager/' + query.id);
 
   return {
     props: {

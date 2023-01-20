@@ -20,7 +20,6 @@ const page = () => {
   });
   const [currentPage, setCurrentPage] = useState<number>(searchOptions.page);
   const { data, isLoading, error } = useVillager(searchOptions);
-  const PER_PAGE = 15;
   const router = useRouter();
 
   const search = (e: React.FormEvent<HTMLFormElement>) => {
@@ -75,7 +74,7 @@ const page = () => {
           </div>
           <Pagination
             totalRows={data.total!}
-            perPage={PER_PAGE}
+            perPage={searchOptions.size}
             currentPage={searchOptions.page}
             setCurrentPage={setCurrentPage}
           />

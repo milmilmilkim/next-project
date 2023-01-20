@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { Villager } from '@/pages/typing/common';
+import type { Villager } from '@/pages/typing/villager';
 import type { ResponseError, ResponseData } from '@/pages/typing/api';
 import type { AxiosError } from 'axios';
 import axios from 'axios';
