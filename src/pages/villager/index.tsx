@@ -8,21 +8,15 @@ import { useRouter } from 'next/router';
 import useVillager from '../hooks/queries/useVillagerList';
 import { useQueryClient } from 'react-query';
 
-// type IndexProps = {
-//   data: Villager[];
-//   species: string[];
-// };
-
 type SearchForm = {
   name?: string;
 };
 
 const page = () => {
-  // const [villagers, setVillagers] = useState<Villager[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchForm, setSearchForm] = useState<SearchForm>({});
   const {
-    data: villagers,
+    data,
     isLoading,
     error,
   } = useVillager({ currentPage: currentPage || 1 });
@@ -32,7 +26,6 @@ const page = () => {
   const search = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (currentPage === 1) {
-      // getList();
     } else {
       setCurrentPage(1);
     }
@@ -60,11 +53,12 @@ const page = () => {
         <button type='submit'>검색</button>
       </form>
       <hr />
-      <span>총...마리</span>
-      <hr />
-      {!isLoading && (
+      <span>총 {data?.total} 마리</span>
+      <hr /> 
+      {!isLoading && data ? (
+        <>
         <div className='item-wrapper'>
-          {villagers?.map((item) => (
+          {data?.data.map((item) => (
             <div
               className='item'
               key={item.id}
@@ -74,14 +68,20 @@ const page = () => {
             </div>
           ))}
         </div>
+         <Pagination
+         totalRows={data.total!}
+         perPage={PER_PAGE}
+         currentPage={currentPage}
+         setCurrentPage={setCurrentPage}
+       />
+       </>
+      ) : (
+        <div>loading...</div>
       )}
 
-      <Pagination
-        totalRows={100}
-        perPage={PER_PAGE}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
+      {error && <>error.response.data.msg</>}
+
+     
       <style jsx>
         {`
           h1 {
