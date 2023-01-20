@@ -1,12 +1,13 @@
 import '@/styles/globals.css';
-import './components/layout/AppLayout';
+import '../components/layout/AppLayout';
 
 import type { AppProps } from 'next/app';
 import type { NextPage } from 'next';
 import type { ReactElement, ReactNode } from 'react';
-import AppLayout from './components/layout/AppLayout';
+import AppLayout from '../components/layout/AppLayout';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { Provider } from 'jotai';
 
 const queryClient = new QueryClient();
 
@@ -24,11 +25,13 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return getLayout(
     <AppLayout>
-      <QueryClientProvider client={queryClient}>
-        {/* devtools */}
-        <ReactQueryDevtools initialIsOpen={true} />
-        <Component {...pageProps} />
-      </QueryClientProvider>
+      <Provider>
+        <QueryClientProvider client={queryClient}>
+          {/* devtools */}
+          <ReactQueryDevtools initialIsOpen={true} />
+          <Component {...pageProps} />
+        </QueryClientProvider>
+      </Provider>
     </AppLayout>
   );
 }

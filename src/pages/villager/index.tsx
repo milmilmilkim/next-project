@@ -1,10 +1,12 @@
 // import { GetServerSideProps } from 'next';
 import { useState, useEffect } from 'react';
-import Pagination from '../components/common/Pagination';
+import Pagination from '../../components/common/Pagination';
 import React from 'react';
 import { useRouter } from 'next/router';
-import useVillager from '../hooks/queries/useVillagerList';
-import { SearchOptions } from '@/pages/typing/villager';
+import useVillager from '../../hooks/queries/useVillagerList';
+import { SearchOptions } from '@/typing/villager';
+import { useAtom } from 'jotai';
+import { searchOptionAtom } from '@/state/villager';
 
 type SearchForm = {
   keyword?: string;
@@ -13,19 +15,15 @@ type SearchForm = {
 const page = () => {
   // const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchForm, setSearchForm] = useState<SearchForm>({});
-  const [searchOptions, setSearchOptions] = useState<SearchOptions>({
-    page: 1,
-    size: 15,
-    keyword: '',
-  });
-  const [currentPage, setCurrentPage] = useState<number>(searchOptions.page);
-  const { data, isLoading, error } = useVillager(searchOptions);
+  const [searchOption, setSearchOption] = useAtom(searchOptionAtom);
+  const [currentPage, setCurrentPage] = useState<number>(searchOption.page);
+  const { data, isLoading, error } = useVillager(searchOption);
   const router = useRouter();
 
   const search = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSearchOptions({
-      ...searchOptions,
+    setSearchOption({
+      ...searchOption,
       keyword: searchForm.keyword,
       page: 1,
     });
@@ -46,7 +44,7 @@ const page = () => {
   };
 
   useEffect(() => {
-    setSearchOptions({ ...searchOptions, page: currentPage });
+    setSearchOption({ ...searchOption, page: currentPage });
   }, [currentPage]);
 
   return (
@@ -74,8 +72,8 @@ const page = () => {
           </div>
           <Pagination
             totalRows={data.total!}
-            perPage={searchOptions.size}
-            currentPage={searchOptions.page}
+            perPage={searchOption.size}
+            currentPage={searchOption.page}
             setCurrentPage={setCurrentPage}
           />
         </>

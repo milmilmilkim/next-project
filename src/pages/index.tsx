@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Pagination from './components/common/Pagination';
+import Pagination from '../components/common/Pagination';
 
 export default function Home() {
   return (

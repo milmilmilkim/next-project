@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import { ResponseError, ResponseData } from '../../typing/api';
 import type { AxiosResponse, AxiosError } from 'axios';
-import type { Villager, SearchOptions } from '@/pages/typing/villager';
+import type { Villager, SearchOptions } from '@/typing/villager';
 
 const useVillager = ({ page, size, keyword }: SearchOptions) => {
   const url = '/api/villager';

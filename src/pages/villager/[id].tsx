@@ -2,7 +2,7 @@
 import { GetServerSideProps } from 'next';
 import { useEffect } from 'react';
 import axios from '@/utils/axios';
-import { Villager, Species } from '../typing/villager';
+import { Villager, Species } from '../../typing/villager';
 
 type PageProps = {
   data: { data: Villager };

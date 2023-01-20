@@ -1,5 +1,5 @@
 import React from 'react';
-import useSheet from '../hooks/queries/useSheet';
+import useSheet from '../../hooks/queries/useSheet';
 
 const Page = () => {
   const { data, isLoading, isError, msg } = useSheet();

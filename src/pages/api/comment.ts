@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { List } from '../typing/sheet';
-import type { ResponseData, ResponseError } from '../typing/api';
+import type { List } from '../../typing/sheet';
+import type { ResponseData, ResponseError } from '../../typing/api';
 import axios, { AxiosError } from 'axios';
 
 import { generateJson } from '@/utils/sheet';
