@@ -1,1 +1,3 @@
-테스트커밋
+# proejct
+
+next.js (api) + typescript + react-query + jotai 
