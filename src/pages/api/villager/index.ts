@@ -1,15 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Villager } from '@/pages/typing/common';
-import type { ResponseError } from '@/pages/typing/api';
+import type { ResponseError, ResponseData } from '@/pages/typing/api';
 import type { AxiosError } from 'axios';
 import axios from 'axios';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Villager[] | ResponseError>
+  res: NextApiResponse<ResponseData<Villager[]> | ResponseError>
 ) {
-  const page = Number(req.query.page) || 1;
-  const size = Number(req.query.size) || 15;
+  const page: number = Number(req.query.page) || 1;
+  const size: number = Number(req.query.size) || 15;
+
   const keyword = (req.query.keyword as string) || '';
 
   try {
@@ -26,19 +27,21 @@ export default async function handler(
     }
 
     // 이름 정렬
-    // list = list.sort((a, b) => {
-    //   if (a.name['name-KRko'] < b.name['name-KRko']) {
-    //     return -1;
-    //   }
-    //   if (a.name['name-KRko'] < b.name['name-KRko']) {
-    //     return 1;
-    //   }
-    //   return 0;
-    // });
-    // 페이지네이션
-    list = list.slice(((page-1) * size),size);
+    list = list.sort((a, b) => {
+      if (a.name['name-KRko'] < b.name['name-KRko']) {
+        return -1;
+      }
+      if (a.name['name-KRko'] < b.name['name-KRko']) {
+        return 1;
+      }
+      return 0;
+    });
 
-    res.send(list);
+    const total = list.length;
+    // 페이지네이션
+    const offset = (page - 1) * size;
+    list = list.slice(offset, offset + size);
+    res.send({ data: list, total });
   } catch (err) {
     const { message } = err as AxiosError;
     res.status(500).json({ msg: message });
