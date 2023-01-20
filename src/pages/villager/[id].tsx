@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import { useEffect } from 'react';
 import axios from 'axios';
-import { Villager, Species } from '../typing/common';
+import { Villager, Species } from '../typing/villager';
 
 type PageProps = {
   data: Villager;

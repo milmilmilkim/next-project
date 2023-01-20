@@ -84,6 +84,11 @@ export enum Species {
 
 export enum Personality {
     Lazy = '',
-    Jock = '',
-    
+    Jock = '',    
+}
+
+export type SearchOptions = {
+  keyword?: string
+  size: number
+  page: number
 }

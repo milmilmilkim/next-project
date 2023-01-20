@@ -1,34 +1,35 @@
-import axios from 'axios';
 // import { GetServerSideProps } from 'next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Pagination from '../components/common/Pagination';
 import React from 'react';
 import { useRouter } from 'next/router';
-// import { Villager } from '../typing/common';
 import useVillager from '../hooks/queries/useVillagerList';
-import { useQueryClient } from 'react-query';
+import { SearchOptions } from '@/pages/typing/villager';
 
 type SearchForm = {
-  name?: string;
+  keyword?: string;
 };
 
 const page = () => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  // const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchForm, setSearchForm] = useState<SearchForm>({});
-  const {
-    data,
-    isLoading,
-    error,
-  } = useVillager({ currentPage: currentPage || 1 });
+  const [searchOptions, setSearchOptions] = useState<SearchOptions>({
+    page: 1,
+    size: 15,
+    keyword: '',
+  });
+  const [currentPage, setCurrentPage] = useState<number>(searchOptions.page);
+  const { data, isLoading, error } = useVillager(searchOptions);
   const PER_PAGE = 15;
   const router = useRouter();
 
   const search = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (currentPage === 1) {
-    } else {
-      setCurrentPage(1);
-    }
+    setSearchOptions({
+      ...searchOptions,
+      keyword: searchForm.keyword,
+      page: 1,
+    });
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,43 +46,46 @@ const page = () => {
     router.push(`${current}/${id}`);
   };
 
+  useEffect(() => {
+    setSearchOptions({ ...searchOptions, page: currentPage });
+  }, [currentPage]);
+
   return (
     <>
       <h1>이웃들</h1>
       <form onSubmit={(e) => search(e)}>
-        <input placeholder='이름' name='name' onChange={onChange} />
+        <input placeholder='이름' name='keyword' onChange={onChange} />
         <button type='submit'>검색</button>
       </form>
       <hr />
       <span>총 {data?.total} 마리</span>
-      <hr /> 
+      <hr />
       {!isLoading && data ? (
         <>
-        <div className='item-wrapper'>
-          {data?.data.map((item) => (
-            <div
-              className='item'
-              key={item.id}
-              onClick={() => movePage(item.id)}>
-              <span className='villager-name'>{item.name['name-KRko']}</span>
-              <img src={item.icon_uri} alt={item.name['name-KRko']} />
-            </div>
-          ))}
-        </div>
-         <Pagination
-         totalRows={data.total!}
-         perPage={PER_PAGE}
-         currentPage={currentPage}
-         setCurrentPage={setCurrentPage}
-       />
-       </>
+          <div className='item-wrapper'>
+            {data?.data.map((item) => (
+              <div
+                className='item'
+                key={item.id}
+                onClick={() => movePage(item.id)}>
+                <span className='villager-name'>{item.name['name-KRko']}</span>
+                <img src={item.icon_uri} alt={item.name['name-KRko']} />
+              </div>
+            ))}
+          </div>
+          <Pagination
+            totalRows={data.total!}
+            perPage={PER_PAGE}
+            currentPage={searchOptions.page}
+            setCurrentPage={setCurrentPage}
+          />
+        </>
       ) : (
         <div>loading...</div>
       )}
 
-      {error && <>error.response.data.msg</>}
+      {error && <>{error.response?.data.msg || error.message}</>}
 
-     
       <style jsx>
         {`
           h1 {

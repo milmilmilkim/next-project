@@ -1,33 +1,20 @@
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { ResponseError, ResponseData } from '../../typing/api';
-import { useEffect } from 'react';
 import type { AxiosResponse, AxiosError } from 'axios';
-import type { Villager } from '@/pages/typing/common';
+import type { Villager, SearchOptions } from '@/pages/typing/villager';
 
-const options = {
-  keyword: '',
-  page: 1,
-  size: 15,
-};
-
-const useVillager = ({ currentPage }: any) => {
-  console.log(currentPage);
+const useVillager = ({ page, size, keyword }: SearchOptions) => {
   const url = '/api/villager';
-  const fetchList = (
-    page: number
-  ): Promise<AxiosResponse<ResponseData<Villager[]>>> => {
+  const fetchList = (): Promise<AxiosResponse<ResponseData<Villager[]>>> => {
     return axios.get(url, {
       params: {
         page,
+        size,
+        keyword,
       },
     });
   };
-
-  useEffect(() => {
-    console.log(currentPage);
-  }, [currentPage]);
-
   const {
     isLoading,
     isError,
@@ -36,7 +23,7 @@ const useVillager = ({ currentPage }: any) => {
   } = useQuery<
     AxiosResponse<ResponseData<Villager[]>>,
     AxiosError<ResponseError>
-  >(['villagerList', currentPage], () => fetchList(currentPage), {
+  >(['villagerList', page, size, keyword], () => fetchList(), {
     refetchOnWindowFocus: false,
     retry: 0, // 실패시 재호출 몇번 할지
     onSuccess: (data) => {
