@@ -4,15 +4,11 @@ import { ResponseError, ResponseData } from '../../typing/api';
 import type { AxiosResponse, AxiosError } from 'axios';
 import type { Villager, SearchOptions } from '@/typing/villager';
 
-const useVillager = ({ page, size, keyword }: SearchOptions) => {
+const useVillager = (searchOption: SearchOptions) => {
   const url = '/api/villager';
   const fetchList = (): Promise<AxiosResponse<ResponseData<Villager[]>>> => {
     return axios.get(url, {
-      params: {
-        page,
-        size,
-        keyword,
-      },
+      params: searchOption
     });
   };
   const {
@@ -23,7 +19,7 @@ const useVillager = ({ page, size, keyword }: SearchOptions) => {
   } = useQuery<
     AxiosResponse<ResponseData<Villager[]>>,
     AxiosError<ResponseError>
-  >(['villagerList', page, size, keyword], () => fetchList(), {
+  >(['villagerList', searchOption], () => fetchList(), {
     refetchOnWindowFocus: false,
     retry: 0, // 실패시 재호출 몇번 할지
     onSuccess: (data) => {

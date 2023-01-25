@@ -4,10 +4,19 @@ import { ResponseData, ResponseError } from '../../typing/api';
 import type { AxiosResponse, AxiosError } from 'axios';
 
 import { List } from '../../typing/sheet';
-const useSheet = () => {
+
+type Props = {
+  villagerId?: number
+}
+const useSheet = ( props : Props = {}) => {
+  const {villagerId} = props;
   const url = '/api/comment';
   const fetchList = (): Promise<AxiosResponse<ResponseData<List[]>>> => {
-    return axios.get(url);
+    return axios.get(url, {
+      params: {
+        id: villagerId || '',
+      },
+    });
   };
 
   const {
@@ -16,7 +25,7 @@ const useSheet = () => {
     data: res,
     error,
   } = useQuery<AxiosResponse<ResponseData<List[]>>, AxiosError<ResponseError>>(
-    'list',
+    ['commentList', villagerId],
     fetchList,
     {
       refetchOnWindowFocus: false, // 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 재실행?

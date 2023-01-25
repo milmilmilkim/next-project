@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { Villager } from '@/typing/villager';
+import { Villager, Species, Personality } from '@/typing/villager';
 import type { ResponseError, ResponseData } from '@/typing/api';
 import type { AxiosError } from 'axios';
 import axios from 'axios';
@@ -24,6 +24,16 @@ export default async function handler(
     // 검색 필터링..
     if (keyword?.trim()) {
       list = list?.filter((villager) => villager.name['name-KRko'] === keyword);
+    }
+
+    if (req.query.species) {
+      const species = Object.keys(Species)[Object.values(Species).indexOf(req.query.species as Species)];
+      list = list?.filter((villager) => villager.species === species);
+    }
+
+    if (req.query.personality) {
+      const personality = Object.keys(Personality)[Object.values(Personality).indexOf(req.query.personality as Personality)];
+      list = list?.filter((villager) => villager.personality === personality);
     }
 
     // 이름 정렬

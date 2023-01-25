@@ -6,3 +6,5 @@ export type ResponseData<T> = {
 export type ResponseError = {
   msg: string;
 };
+
+export type ApiController = <T>(req: number, res: number) => T 

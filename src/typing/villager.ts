@@ -83,12 +83,20 @@ export enum Species {
 }
 
 export enum Personality {
-    Lazy = '',
-    Jock = '',    
+  Lazy = '먹보',
+  Jock = '운동광',
+  Cranky = '무뚝뚝',
+  Smug = '느끼함',
+  Normal = '친절함',
+  Peppy = '아이돌',
+  Snooty = '성숙함',
+  Uchi = '단순활발',
 }
 
 export type SearchOptions = {
-  keyword?: string
-  size: number
-  page: number
-}
+  keyword?: string;
+  size: number;
+  page: number;
+  species?: Species;
+  personality?: Personality;
+};

@@ -43,9 +43,11 @@ const Pagination: React.FC<PaginationProps> = ({
 
   useEffect(() => {
     const pages = new Array(GROUP_SIZE);
-    for (let i = firstPage; i <= GROUP_SIZE * groupNum; i++) {
-      pages.push(i);
-      if(i === LAST_PAGE) break;
+    if (totalRows > 0) {
+      for (let i = firstPage; i <= GROUP_SIZE * groupNum; i++) {
+        pages.push(i);
+        if (i === LAST_PAGE) break;
+      }
     }
     setPages(pages);
   }, [firstPage, totalRows]);

@@ -7,16 +7,15 @@ import useVillager from '../../hooks/queries/useVillagerList';
 import { SearchOptions } from '@/typing/villager';
 import { useAtom } from 'jotai';
 import { searchOptionAtom } from '@/state/villager';
-
-type SearchForm = {
-  keyword?: string;
-};
+import { Species } from '@/typing/villager';
+import { Personality } from '@/typing/villager';
 
 const page = () => {
-  // const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchForm, setSearchForm] = useState<SearchForm>({});
+  const [searchForm, setSearchForm] = useState<SearchOptions>({});
   const [searchOption, setSearchOption] = useAtom(searchOptionAtom);
-  const [currentPage, setCurrentPage] = useState<number>(searchOption.page);
+  const [currentPage, setCurrentPage] = useState<number>(
+    searchOption.page || 1
+  );
   const { data, isLoading, error } = useVillager(searchOption);
   const router = useRouter();
 
@@ -34,6 +33,38 @@ const page = () => {
     setSearchForm({
       ...searchForm,
       [name]: value,
+    });
+  };
+
+  const addSpecies = (species: Species) => {
+    let next;
+
+    if (searchOption.species === species) {
+      next = null;
+    } else {
+      next = species;
+    }
+
+    setSearchOption({
+      ...searchOption,
+      species: next,
+      page: 1,
+    });
+  };
+
+  const addPersonality = (personality: Personality) => {
+    let next;
+
+    if (searchOption.personality === personality) {
+      next = null;
+    } else {
+      next = personality;
+    }
+
+    setSearchOption({
+      ...searchOption,
+      personality: next,
+      page: 1,
     });
   };
 
@@ -55,10 +86,34 @@ const page = () => {
         <button type='submit'>검색</button>
       </form>
       <hr />
-      <span>총 {data?.total} 마리</span>
+      {Object.values(Species).map((species, index) => (
+        <span
+          className={
+            (searchOption.species === species ? 'selected' : '') + ' tag'
+          }
+          key={index}
+          onClick={() => addSpecies(species)}>
+          {species}
+        </span>
+      ))}
+      <hr />
+      {Object.values(Personality).map((personality, index) => (
+        <span
+          className={
+            (searchOption.personality === personality ? 'selected' : '') +
+            ' tag'
+          }
+          key={index}
+          onClick={() => addPersonality(personality)}>
+          {personality}
+        </span>
+      ))}
+
       <hr />
       {!isLoading && data ? (
         <>
+          <span>총 {data?.total} 마리</span>
+          <hr />
           <div className='item-wrapper'>
             {data?.data.map((item) => (
               <div
@@ -71,9 +126,9 @@ const page = () => {
             ))}
           </div>
           <Pagination
-            totalRows={data.total!}
-            perPage={searchOption.size}
-            currentPage={searchOption.page}
+            totalRows={data.total || 0}
+            perPage={searchOption.size || 15}
+            currentPage={searchOption.page || 1}
             setCurrentPage={setCurrentPage}
           />
         </>
@@ -118,6 +173,29 @@ const page = () => {
             padding: 10px;
           }
 
+          span.tag {
+            display: inline-block;
+            border: 1px solid #000;
+            padding: 2px;
+            margin: 2px 4px 0 0;
+            cursor: pointer;
+            background-color: #fff;
+          }
+
+          span.tag.selected::after {
+            content: 'X';
+            position: relative;
+            top: 50%;
+            font-size: 7px;
+            margin: 2px;
+            color: red;
+          }
+
+          span.tag.selected {
+            background-color: #000;
+            color: #fff;
+          }
+
           @media (max-width: 800px) {
             .item-wrapper {
               grid-template-columns: repeat(3, 1fr);
@@ -128,28 +206,5 @@ const page = () => {
     </>
   );
 };
-
-// export const getServerSideProps: GetServerSideProps = async () => {
-//   const { data } = await axios.get('http://acnhapi.com/v1/villagers/');
-//   const keys = Object.keys(data);
-//   const list: Villager[] = [];
-//   keys.forEach((key: string) => {
-//     list.push(data[key]);
-//   });
-//   return {
-//     props: {
-//       data: list.sort((a, b) => {
-//         if (a.name['name-KRko'] < b.name['name-KRko']) {
-//           return -1;
-//         }
-//         if (a.name['name-KRko'] < b.name['name-KRko']) {
-//           return 1;
-//         }
-//         return 0;
-//       }),
-//       species,
-//     },
-//   };
-// };
 
 export default page;
