@@ -24,7 +24,7 @@ export default function Nav() {
       </nav>
       <style jsx>{`
         nav {
-          margin: 50px 0 50px;
+          margin: 20px 0 20px;
         }
         ul {
           display: flex;

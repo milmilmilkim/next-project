@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import Pagination from '../components/common/Pagination';
 
 export default function Home() {
   return (
@@ -13,7 +12,16 @@ export default function Home() {
       <header>
         <h1>my next project</h1>
         <hr />
-        <p>hello world</p>
+        요즘 유행하는 프론트엔드 기술 스택
+        <ul>
+          <li>- next.js (react SSR framework)</li>
+          <li>- typescript</li>
+          <li>- react-query</li>
+          <li>- jotai</li>
+          <li>- styled-component</li>
+        </ul>
+        <br/>
+        DB 대용: gogole spread sheet api
       </header>
       <style jsx>
         {`
