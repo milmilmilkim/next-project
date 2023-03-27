@@ -1,11 +1,12 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-
-const userProfileAtom = atom({
+import { User } from '@/typing/user';
+const userProfileAtom = atom<User>({
   email: '',
   displayName: '',
   photoURL: '',
   uid: '',
+  accessToken: '',
 });
 
 const isLoginAtom = atom<boolean>(false);

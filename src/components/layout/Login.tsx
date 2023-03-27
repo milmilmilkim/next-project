@@ -5,12 +5,14 @@ import {
 import { FirebaseError } from 'firebase/app';
 import { auth } from '@/config/firebase';
 import useLogin from '@/hooks/queries/useLogin';
-import { isLoginAtom } from '@/state/login';
+import { isLoginAtom, userProfileAtom } from '@/state/login';
 import { useAtom } from 'jotai';
+import styled from 'styled-components';
 
 const Login = () => {
-  const { login: aLogin } = useLogin();
+  const { login: aLogin, logout } = useLogin();
   const [isLogin] = useAtom(isLoginAtom);
+  const [userProfile] = useAtom(userProfileAtom);
 
   const join = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,7 +55,13 @@ const Login = () => {
   return (
     <>
       {isLogin ? (
-        '로그인중'
+        <StyledProfile>
+          <div className='profile'>
+            <p>{userProfile.email}</p>
+            <p>{userProfile.displayName}</p>
+          </div>
+          <div onClick={logout}>logout</div>
+        </StyledProfile>
       ) : (
         <form onSubmit={login}>
           <input type='email' name='email' placeholder='email' />
@@ -70,5 +78,11 @@ const Login = () => {
     </>
   );
 };
+
+const StyledProfile = styled.div`
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+`;
 
 export default Login;

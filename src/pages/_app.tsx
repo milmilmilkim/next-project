@@ -8,8 +8,6 @@ import AppLayout from '../components/layout/AppLayout';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'jotai';
-import { initializeApp } from 'firebase/app'
-import firebaseConfig from '@/config/firebase';
 
 const queryClient = new QueryClient();
 
@@ -21,20 +19,17 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   //Use The layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
 
-  return getLayout(
-    <AppLayout>
-      <Provider>
-        <QueryClientProvider client={queryClient}>
-          {/* devtools */}
-          <ReactQueryDevtools initialIsOpen={true} />
-          <Component {...pageProps} />
-        </QueryClientProvider>
-      </Provider>
-    </AppLayout>
+  return (
+    <Provider>
+      <QueryClientProvider client={queryClient}>
+        {/* devtools */}
+        <ReactQueryDevtools initialIsOpen={true} />
+        <AppLayout>{getLayout(<Component {...pageProps} />)}</AppLayout>
+      </QueryClientProvider>
+    </Provider>
   );
 }
